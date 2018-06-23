@@ -7,7 +7,6 @@
 [node name="level_base" type="Node2D" index="0"]
 
 script = ExtResource( 1 )
-initial_peeps = 0
 
 [node name="tile_map" type="TileMap" parent="." index="0"]
 
@@ -34,14 +33,35 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="objects" type="YSort" parent="tile_map" index="0"]
+[node name="init" type="TileMap" parent="tile_map" index="0"]
+
+mode = 0
+tile_set = ExtResource( 2 )
+cell_size = Vector2( 16, 16 )
+cell_quadrant_size = 16
+cell_custom_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+cell_half_offset = 2
+cell_tile_origin = 0
+cell_y_sort = false
+cell_clip_uv = false
+collision_use_kinematic = false
+collision_friction = 1.0
+collision_bounce = 0.0
+collision_layer = 1
+collision_mask = 1
+occluder_light_mask = 1
+format = 1
+tile_data = PoolIntArray(  )
+_sections_unfolded = [ "Cell" ]
+
+[node name="objects" type="YSort" parent="tile_map" index="1"]
 
 sort_enabled = true
 _sections_unfolded = [ "Sort", "Transform", "Z Index" ]
 
-[node name="overlay" type="Node2D" parent="tile_map" index="1"]
+[node name="overlay" type="Node2D" parent="tile_map" index="2"]
 
-[node name="cursor" type="Sprite" parent="tile_map" index="2"]
+[node name="cursor" type="Sprite" parent="tile_map" index="3"]
 
 visible = false
 texture = ExtResource( 3 )

@@ -1,7 +1,5 @@
 extends Node2D
 
-export (int) var initial_peeps = 0
-
 const Cell = preload('res://model/cell.gd')
 const Grid = preload('res://model/grid.gd')
 
@@ -17,12 +15,17 @@ func _ready():
 	for coord in grid.coords:
 		grid.set(coord, Cell.new(coord, tile_map.tile_set.tile_get_name(tile_map.get_cell(coord.x, coord.y))))
 	
-	var street_cells = []
-	for cell in grid.cells:
-		if cell.is_walkable:
-			street_cells.push_back(cell)
-	for i in range(initial_peeps):
-		spawn_peep(Utils.random_item(street_cells).coord)
+	var init = find_node('init')
+	for coord in grid.coords:
+		var tile_id = init.get_cell(coord.x, coord.y)
+		if tile_id < 0:
+			continue
+		var tile_name = init.tile_set.tile_get_name(tile_id)
+		if tile_name == 'peep_1':
+			spawn_peep(coord)
+		elif tile_name.left(5) == 'fire_':
+			spawn_fire(coord, int(tile_name[5]))
+	init.get_parent().remove_child(init)
 	
 	cursor.hide()
 
@@ -30,6 +33,16 @@ func spawn_peep(coord):
 	var peep = preload('res://objects/peep.tscn').instance()
 	objects.add_child(peep)
 	peep.initialize(grid, coord)
+
+func spawn_fire(coord, size):
+	var fire = preload('res://objects/fire.tscn').instance()
+	objects.add_child(fire)
+	fire.initialize(grid, coord)
+	fire.size = size
+	fire.connect('spreading', self, 'on_fire_spreading')
+
+func on_fire_spreading(coord, size):
+	spawn_fire(coord, size)
 
 var mouse_down = false
 var manning = false
