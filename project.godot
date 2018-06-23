@@ -16,7 +16,8 @@ config/icon="res://icon.png"
 
 [autoload]
 
-debug="*res://utils/debug.gd"
+Debug="*res://utils/debug.gd"
+Utils="*res://utils/utils.gd"
 
 [display]
 
@@ -58,4 +59,5 @@ name_casing=2
 quality/intended_usage/framebuffer_allocation=1
 quality/2d/use_pixel_snap=true
 quality/filters/use_nearest_mipmap_filter=true
+environment/default_clear_color=Color( 0, 0, 0, 1 )
 environment/default_environment="res://default_env.tres"
