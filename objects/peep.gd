@@ -3,7 +3,7 @@ extends Node2D
 var grid
 var coord
 
-enum State { PANIC, MOVING, HAULING }
+enum State { PANIC, MANNING, PASSING }
 
 var state = PANIC
 var route = []
@@ -31,6 +31,13 @@ func _physics_process(delta):
 			position = dest
 			remaining_dist -= dist
 			set_coord(route.pop_front())
+	
+	if state == MANNING and len(route) == 0:
+		state = PASSING
+		var cell = grid.get(coord)
+		if cell.manning_marker != null:
+			cell.manning_marker.get_parent().remove_child(cell.manning_marker)
+			cell.manning_marker = null
 
 func randomize_route():
 	var at = coord
@@ -45,8 +52,39 @@ func randomize_route():
 		route.push_back(next)
 		at = next
 
+func panic():
+	state = PANIC
+
+func man_cell(coord):
+	state = MANNING
+	route = find_route(self.coord, coord)
+
 func set_coord(coord):
 	if self.coord != null:
 		grid.get(self.coord).peeps.erase(self)
 	self.coord = coord
 	grid.get(self.coord).peeps.push_back(self)
+
+func find_route(from, to):
+	var queue = [from]
+	var visited = {}
+	var came_from = {}
+	while len(queue) > 0:
+		var c = queue.pop_front()
+		if visited.has(c):
+			continue
+		visited[c] = true
+		var cell = grid.get(c)
+		if not cell.is_walkable:
+			continue
+		if c == to:
+			var route = [to]
+			while c != from:
+				c = came_from[c]
+				route.push_front(c)
+			return route
+		for n in grid.neighbors(c):
+			if not came_from.has(n):
+				came_from[n] = c
+			queue.push_back(n)
+	return null
