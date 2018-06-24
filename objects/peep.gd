@@ -14,7 +14,7 @@ var FILL_BUCKET_INTERVAL = 0
 enum State { PANIC, MANNING, PASSING, CHEERING }
 enum BucketDirection { IN, OUT }
 
-var state = PANIC
+var state = PANIC setget set_state
 var route = []
 var fill_bucket_cooldown = 0
 var bucket = null
@@ -25,8 +25,12 @@ var body_number = 1
 var head_number = 1
 onready var body = $body
 onready var head = $head
+onready var bucket_root = $bucket_root
+onready var left_hand = $left_hand
+onready var right_hand = $right_hand
 var current_direction = null
 var offset = Vector2(0, 0)
+var hand_time = 0
 
 func _ready():
 	body.modulate = ColorN(Utils.random_item(["aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige", "bisque", "black", "blanchedalmond", "blue", "blueviolet", "brown", "burlywood", "cadetblue", "chartreuse", "chocolate", "coral", "cornflower", "cornsilk", "crimson", "cyan", "darkblue", "darkcyan", "darkgoldenrod", "darkgray", "darkgreen", "darkkhaki", "darkmagenta", "darkolivegreen", "darkorange", "darkorchid", "darkred", "darksalmon", "darkseagreen", "darkslateblue", "darkslategray", "darkturquoise", "darkviolet", "deeppink", "deepskyblue", "dimgray", "dodgerblue", "firebrick", "floralwhite", "forestgreen", "fuchsia", "gainsboro", "ghostwhite", "gold", "goldenrod", "gray", "webgray", "green", "webgreen", "greenyellow", "honeydew", "hotpink", "indianred", "indigo", "ivory", "khaki", "lavender", "lavenderblush", "lawngreen", "lemonchiffon", "lightblue", "lightcoral", "lightcyan", "lightgoldenrod", "lightgray", "lightgreen", "lightpink", "lightsalmon", "lightseagreen", "lightskyblue", "lightslategray", "lightsteelblue", "lightyellow", "lime", "limegreen", "linen", "magenta", "maroon", "webmaroon", "mediumaquamarine", "mediumblue", "mediumorchid", "mediumpurple", "mediumseagreen", "mediumslateblue", "mediumspringgreen", "mediumturquoise", "mediumvioletred", "midnightblue", "mintcream", "mistyrose", "moccasin", "navajowhite", "navyblue", "oldlace", "olive", "olivedrab", "orange", "orangered", "orchid", "palegoldenrod", "palegreen", "paleturquoise", "palevioletred", "papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue", "purple", "webpurple", "rebeccapurple", "red", "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen", "seashell", "sienna", "silver", "skyblue", "slateblue", "slategray", "snow", "springgreen", "steelblue", "tan", "teal", "thistle", "tomato", "turquoise", "violet", "wheat", "white", "whitesmoke", "yellow", "yellowgreen"]))
@@ -46,6 +50,24 @@ func _physics_process(delta):
 		var dest = grid.get_cell_center(route[0])
 		if move_towards(self, dest, MANNING_SPEED if state == MANNING else PANIC_SPEED, delta):
 			set_coord(route.pop_front())
+	
+	hand_time += delta
+	match state:
+		PANIC:
+			var p = 3 * 2 * PI * hand_time
+			left_hand.offset = Vector2(round(0.5 + 0.5 * sin(p)), 0)
+			right_hand.offset = -left_hand.offset
+		CHEERING:
+			var p = 2 * 2 * PI * hand_time
+			left_hand.offset = Vector2(round(sin(p)), 0)
+			right_hand.offset = left_hand.offset
+		MANNING:
+			var p = 2 * 2 * PI * hand_time
+			left_hand.offset = Vector2(round(0.5 + 0.5 * sin(p)), 0)
+			right_hand.offset = left_hand.offset
+		_:
+			left_hand.offset = Vector2(0, 0)
+			right_hand.offset = Vector2(0, 0)
 	
 	if state == MANNING and len(route) == 0:
 		state = PASSING
@@ -95,6 +117,16 @@ func _physics_process(delta):
 			if bucket_direction == IN:
 				if move_towards(bucket, -offset, BUCKET_SPEED, delta):
 					bucket_direction = OUT
+		if bucket == null:
+			update_hands()
+		else:
+			match current_direction:
+				'left', 'right':
+					left_hand.position = bucket.position + Vector2(0, -3)
+					right_hand.position = bucket.position + Vector2(0, -2)
+				'up', 'down':
+					left_hand.position = bucket.position + Vector2(-1, -3)
+					right_hand.position = bucket.position + Vector2(1, -3)
 	else:
 		set_offset(Vector2(0, 0))
 
@@ -123,6 +155,42 @@ func set_direction(direction):
 	current_direction = name
 	body.texture = load('res://objects/body_%s_%d.png' % [name, body_number])
 	head.texture = load('res://objects/head_%s_%d.png' % [name, head_number])
+	update_hands()
+
+func set_state(s):
+	state = s
+	update_hands()
+
+func update_hands():
+	match state:
+		PANIC, CHEERING:
+			match current_direction:
+				'down':
+					left_hand.position = Vector2(5, -1)
+					right_hand.position = Vector2(-5, -1)
+				'up':
+					left_hand.position = Vector2(-5, -2)
+					right_hand.position = Vector2(5, -2)
+				'left':
+					left_hand.position = Vector2(0, -2)
+					right_hand.position = Vector2(9999, 9999)
+				'right':
+					left_hand.position = Vector2(9999, 9999)
+					right_hand.position = Vector2(0, -2)
+		_:
+			match current_direction:
+				'down':
+					left_hand.position = Vector2(4, 3)
+					right_hand.position = Vector2(-4, 3)
+				'up':
+					left_hand.position = Vector2(9999, 9999)
+					right_hand.position = Vector2(9999, 9999)
+				'left':
+					left_hand.position = Vector2(-2, 4)
+					right_hand.position = Vector2(9999, 9999)
+				'right':
+					left_hand.position = Vector2(9999, 9999)
+					right_hand.position = Vector2(2, 4)
 
 func set_offset(offset):
 	self.offset = offset
@@ -131,15 +199,16 @@ func set_offset(offset):
 
 func panic():
 	destroy_bucket()
-	state = PANIC
+	set_state(PANIC)
 
 func cheer():
 	destroy_bucket()
 	route.clear()
-	state = CHEERING
+	set_direction(Vector2(0, 1))
+	set_state(CHEERING)
 
 func man_cell(coord):
-	state = MANNING
+	set_state(MANNING)
 	route = find_route(self.coord, coord)
 
 func get_neighbor_water_cell():
@@ -151,7 +220,7 @@ func get_neighbor_water_cell():
 func fill_bucket_from(coord):
 	bucket = preload('res://objects/bucket.tscn').instance()
 	bucket.position = 0.5 * (grid.get_cell_center(coord) - position)
-	add_child(bucket)
+	bucket_root.add_child(bucket)
 	bucket_origin = coord
 	bucket_direction = IN
 
@@ -159,8 +228,8 @@ func receive_bucket_from(bucket, coord):
 	self.bucket = bucket
 	var prev_parent = bucket.get_parent()
 	prev_parent.remove_child(bucket)
-	bucket.position = (transform.inverse() * prev_parent.transform).xform(bucket.position)
-	add_child(bucket)
+	bucket.position = (get_global_transform().inverse() * prev_parent.get_global_transform()).xform(bucket.position)
+	bucket_root.add_child(bucket)
 	bucket_origin = coord
 	bucket_direction = IN
 

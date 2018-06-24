@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://objects/peep.gd" type="Script" id=1]
 [ext_resource path="res://objects/body_down_1.png" type="Texture" id=2]
 [ext_resource path="res://objects/head_down_1.png" type="Texture" id=3]
+[ext_resource path="res://objects/hand.png" type="Texture" id=4]
 
 [node name="peep" type="Node2D" index="0"]
 
@@ -16,5 +17,19 @@ _sections_unfolded = [ "Transform" ]
 [node name="head" type="Sprite" parent="." index="1"]
 
 texture = ExtResource( 3 )
+
+[node name="bucket_root" type="Node2D" parent="." index="2"]
+
+[node name="left_hand" type="Sprite" parent="." index="3"]
+
+position = Vector2( 4, 3 )
+texture = ExtResource( 4 )
+_sections_unfolded = [ "Offset", "Transform", "Z Index" ]
+
+[node name="right_hand" type="Sprite" parent="." index="4"]
+
+position = Vector2( -4, 3 )
+texture = ExtResource( 4 )
+_sections_unfolded = [ "Transform", "Z Index" ]
 
 
