@@ -21,6 +21,8 @@ func _ready():
 		i += 1
 	
 	pause_button.connect('pressed', self, 'toggle_pause')
+	prev_button.connect('pressed', self, 'start_level', [null]) # Squash error
+	next_button.connect('pressed', self, 'start_level', [null]) # Squash error
 	
 	load_config()
 	start_level(current_level)
