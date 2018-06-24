@@ -1,6 +1,7 @@
 extends Node2D
 
 signal throwing
+signal state_changed
 
 var grid
 var coord
@@ -158,8 +159,10 @@ func set_direction(direction):
 	update_hands()
 
 func set_state(s):
-	state = s
-	update_hands()
+	if state != s:
+		state = s
+		update_hands()
+		emit_signal('state_changed')
 
 func update_hands():
 	match state:

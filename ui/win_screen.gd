@@ -21,21 +21,20 @@ var REMARKS = [
 ]
 
 onready var percentage = find_node('percentage')
+onready var highscore = find_node('highscore')
 onready var remark = find_node('remark')
 
 func _ready():
 	$animation_player.play('fade_in')
 	set_counting_fraction(counting_fraction)
-	var highscore_text
+	remark.text = REMARKS[clamp(floor(percent_survived / 100 * len(REMARKS)), 0, len(REMARKS) - 1)]
 	if is_new_highscore:
 		if prev_highscore == null:
-			highscore_text = ''
+			highscore.text = ''
 		else:
-			highscore_text = 'New best! Previous best: %d*. ' % [round(prev_highscore)]
+			highscore.text = 'New best! Previous best: %d*' % [round(prev_highscore)]
 	else:
-		highscore_text = 'Best: %d*. ' % [round(prev_highscore)]
-	var rem = REMARKS[clamp(floor(percent_survived / 100 * len(REMARKS)), 0, len(REMARKS) - 1)]
-	remark.text = '%s%s' % [highscore_text, rem]
+		highscore.text = 'Best: %d*' % [round(prev_highscore)]
 
 func initialize(level, percent_survived, prev_highscore, is_new_highscore, next_level):
 	self.percent_survived = percent_survived

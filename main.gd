@@ -9,6 +9,7 @@ var highscores = {}
 
 onready var level_root = find_node('level_root')
 onready var pause_button = find_node('pause_button')
+onready var peep_counter = find_node('peep_counter')
 onready var prev_button = find_node('prev_button')
 onready var next_button = find_node('next_button')
 
@@ -68,8 +69,9 @@ func start_level(level):
 	save_config()
 	
 	var level_scene = load(level).instance()
-	level_root.add_child(level_scene)
+	level_scene.connect('idle_peeps_changed', self, 'on_idle_peeps_changed')
 	level_scene.connect('won', self, 'on_level_won')
+	level_root.add_child(level_scene)
 	
 	var re = RegEx.new()
 	re.compile('[1-9]\\d*')
@@ -102,6 +104,9 @@ func _unhandled_input(event):
 	if event is InputEventKey and event.pressed and event.scancode == KEY_SPACE:
 		toggle_pause()
 
+func on_idle_peeps_changed(idle_peeps):
+	peep_counter.text = 'Idle peeps: %d' % idle_peeps
+
 func on_level_won(percent_survived):
 	var next_level = get_next_level(current_level)
 	if current_level == max_level and next_level != null:
@@ -110,7 +115,7 @@ func on_level_won(percent_survived):
 	
 	var prev_highscore = highscores[current_level]
 	var is_new_highscore = false
-	if prev_highscore == null or prev_highscore > percent_survived:
+	if prev_highscore == null or percent_survived > prev_highscore:
 		is_new_highscore = true
 		highscores[current_level] = percent_survived
 		save_config()

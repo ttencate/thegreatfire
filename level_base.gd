@@ -1,6 +1,7 @@
 extends Node2D
 
 signal won(percent_survived)
+signal idle_peeps_changed(idle_peeps)
 
 const Cell = preload('res://model/cell.gd')
 const Grid = preload('res://model/grid.gd')
@@ -10,6 +11,7 @@ onready var objects = find_node('objects')
 onready var overlay = find_node('overlay')
 onready var cursor = find_node('cursor')
 var grid
+var peeps = []
 
 var is_won = false
 
@@ -29,6 +31,7 @@ func _ready():
 			spawn_peep(coord)
 		elif tile_name.left(5) == 'fire_':
 			spawn_fire(coord, int(tile_name[5]))
+	update_peep_counter()
 	init.get_parent().remove_child(init)
 	init.queue_free()
 	
@@ -39,6 +42,15 @@ func spawn_peep(coord):
 	objects.add_child(peep)
 	peep.initialize(grid, coord)
 	peep.connect('throwing', self, 'on_peep_throwing')
+	peep.connect('state_changed', self, 'update_peep_counter')
+	peeps.push_back(peep)
+
+func update_peep_counter():
+	var idle_peeps = 0
+	for peep in peeps:
+		if peep.state == peep.PANIC:
+			idle_peeps += 1
+	emit_signal('idle_peeps_changed', idle_peeps)
 
 func spawn_fire(coord, size):
 	var cell = grid.get(coord)
