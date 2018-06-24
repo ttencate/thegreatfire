@@ -1,12 +1,15 @@
 extends Node2D
 
+signal throwing
+
 var grid
 var coord
 
 var PANIC_SPEED = 1
 var MANNING_SPEED = 2
 var BUCKET_SPEED = 1
-var FILL_BUCKET_INTERVAL = 2
+var THROW_SPEED = 3
+var FILL_BUCKET_INTERVAL = 0
 
 enum State { PANIC, MANNING, PASSING }
 enum BucketDirection { IN, OUT }
@@ -53,8 +56,17 @@ func _physics_process(delta):
 				var dest_coord = find_bucket_destination()
 				if dest_coord != null:
 					var dest = 0.5 * (grid.get_cell_center(dest_coord) - position)
-					if move_towards(bucket, dest, BUCKET_SPEED, delta):
-						grid.get(dest_coord).manning_peep.receive_bucket_from(bucket, coord)
+					var throwing = grid.get(dest_coord).is_flammable
+					var speed = THROW_SPEED if throwing else BUCKET_SPEED
+					if throwing:
+						bucket.rotation = -(dest_coord - coord).angle() + PI / 2
+					else:
+						bucket.rotation = 0
+					if move_towards(bucket, dest, speed, delta):
+						if throwing:
+							throw_bucket(dest_coord)
+						else:
+							grid.get(dest_coord).manning_peep.receive_bucket_from(bucket, coord)
 						bucket = null
 				else:
 					bucket_direction = IN
@@ -102,6 +114,10 @@ func receive_bucket_from(bucket, coord):
 	bucket_origin = coord
 	bucket_direction = IN
 
+func throw_bucket(dest):
+	emit_signal('throwing', coord, dest)
+	destroy_bucket()
+
 func destroy_bucket():
 	if bucket != null:
 		bucket.get_parent().remove_child(bucket)
@@ -113,6 +129,8 @@ func find_bucket_destination():
 		return null
 	var dest_cell = grid.get(cell.destination)
 	if dest_cell.manning_peep != null and dest_cell.manning_peep.state == PASSING and dest_cell.manning_peep.bucket == null:
+		return cell.destination
+	elif dest_cell.is_flammable:
 		return cell.destination
 	return null
 

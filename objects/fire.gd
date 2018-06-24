@@ -1,7 +1,7 @@
 extends AnimatedSprite
 
 var MAX_SIZE = 5
-var GROW_INTERVAL = 5
+var GROW_INTERVAL = 3
 var GROW_INTERVAL_RANDOM = 0.3
 var GROW_RANGES = [
 	-1,

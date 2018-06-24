@@ -33,6 +33,7 @@ func spawn_peep(coord):
 	var peep = preload('res://objects/peep.tscn').instance()
 	objects.add_child(peep)
 	peep.initialize(grid, coord)
+	peep.connect('throwing', self, 'on_peep_throwing')
 
 func spawn_fire(coord, size):
 	var fire = preload('res://objects/fire.tscn').instance()
@@ -43,6 +44,23 @@ func spawn_fire(coord, size):
 
 func on_fire_spreading(coord, size):
 	spawn_fire(coord, size)
+
+func reduce_fire(coord):
+	var cell = grid.get(coord)
+	if cell.fire != null:
+		if cell.fire.size > 1:
+			cell.fire.set_size(cell.fire.size - 1)
+		else:
+			cell.fire.get_parent().remove_child(cell.fire)
+			cell.fire = null
+
+func on_peep_throwing(from, to):
+	var thrown_water = preload('res://objects/thrown_water.tscn').instance()
+	thrown_water.position = grid.get_cell_center(to)
+	thrown_water.rotation = (to - from).angle()
+	objects.add_child(thrown_water)
+	
+	reduce_fire(to)
 
 var drag_from_coord = null
 
@@ -64,7 +82,7 @@ func _input(event):
 				if from.is_water or from.manning:
 					if to.is_mannable and not to.manning:
 						man_cell(to)
-					if to.is_flammable or to.manning:
+					if (from.is_water and to.manning) or (from.manning and (to.is_flammable or to.manning)):
 						set_destination(from, coord)
 				elif from.is_mannable and not from.manning and to.manning:
 					unman_cell(to)
