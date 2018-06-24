@@ -11,7 +11,7 @@ var BUCKET_SPEED = 1
 var THROW_SPEED = 3
 var FILL_BUCKET_INTERVAL = 0
 
-enum State { PANIC, MANNING, PASSING }
+enum State { PANIC, MANNING, PASSING, CHEERING }
 enum BucketDirection { IN, OUT }
 
 var state = PANIC
@@ -41,6 +41,7 @@ func _physics_process(delta):
 		var cell = grid.get(coord)
 		if cell.manning_marker != null:
 			cell.manning_marker.get_parent().remove_child(cell.manning_marker)
+			cell.manning_marker.queue_free()
 			cell.manning_marker = null
 	
 	if state == PASSING:
@@ -88,6 +89,11 @@ func panic():
 	destroy_bucket()
 	state = PANIC
 
+func cheer():
+	destroy_bucket()
+	route.clear()
+	state = CHEERING
+
 func man_cell(coord):
 	state = MANNING
 	route = find_route(self.coord, coord)
@@ -121,6 +127,7 @@ func throw_bucket(dest):
 func destroy_bucket():
 	if bucket != null:
 		bucket.get_parent().remove_child(bucket)
+		bucket.queue_free()
 		bucket = null
 
 func find_bucket_destination():

@@ -1,5 +1,7 @@
 extends Node2D
 
+signal won(percent_survived)
+
 const Cell = preload('res://model/cell.gd')
 const Grid = preload('res://model/grid.gd')
 
@@ -8,6 +10,8 @@ onready var objects = find_node('objects')
 onready var overlay = find_node('overlay')
 onready var cursor = find_node('cursor')
 var grid
+
+var is_won = false
 
 func _ready():
 	var default_cell = Cell.new(Vector2(-1, -1), 'grass_1')
@@ -26,6 +30,7 @@ func _ready():
 		elif tile_name.left(5) == 'fire_':
 			spawn_fire(coord, int(tile_name[5]))
 	init.get_parent().remove_child(init)
+	init.queue_free()
 	
 	cursor.hide()
 
@@ -54,11 +59,10 @@ func on_fire_spreading(coord, size):
 
 func on_fire_collapsing(coord):
 	var cell = grid.get(coord)
-	if cell.fire != null:
-		cell.fire.get_parent().remove_child(cell.fire)
-		cell.fire = null
+	destroy_fire(cell)
 	tile_map.set_cell(coord.x, coord.y, tile_map.tile_set.find_tile_by_name('rubble'))
 	cell.is_flammable = false
+	cell.is_collapsed = true
 
 func reduce_fire(coord):
 	var cell = grid.get(coord)
@@ -66,8 +70,14 @@ func reduce_fire(coord):
 		if cell.fire.size > 1:
 			cell.fire.set_size(cell.fire.size - 1)
 		else:
-			cell.fire.get_parent().remove_child(cell.fire)
-			cell.fire = null
+			destroy_fire(cell)
+
+func destroy_fire(cell):
+	if cell.fire != null:
+		cell.fire.get_parent().remove_child(cell.fire)
+		cell.fire.queue_free()
+		cell.fire = null
+	check_win()
 
 func on_peep_throwing(from, to):
 	var thrown_water = preload('res://objects/thrown_water.tscn').instance()
@@ -77,9 +87,33 @@ func on_peep_throwing(from, to):
 	
 	reduce_fire(to)
 
+func check_win():
+	if is_won:
+		return
+	var num_flammable = 0
+	var num_collapsed = 0
+	for c in grid.coords:
+		var cell = grid.get(c)
+		if cell.fire != null:
+			return
+		if cell.is_flammable:
+			num_flammable += 1
+		if cell.is_collapsed:
+			num_collapsed += 1
+	is_won = true
+	cursor.hide()
+	for c in grid.coords:
+		var cell = grid.get(c)
+		set_destination(cell, null)
+		for peep in cell.peeps:
+			peep.cheer()
+	emit_signal('won', float(num_flammable) / (num_flammable + num_collapsed) * 100)
+
 var drag_from_coord = null
 
 func _input(event):
+	if is_won:
+		return
 	if event is InputEventMouse:
 		var coord = tile_map.world_to_map(tile_map.to_local(event.global_position))
 		if not grid.has(coord):
@@ -104,10 +138,12 @@ func _input(event):
 			drag_from_coord = coord
 		
 		if event is InputEventMouseButton:
-			if event.is_pressed():
+			if event.is_pressed() and event.button_index == BUTTON_LEFT:
 				drag_from_coord = coord
 			else:
 				drag_from_coord = null
+			if OS.has_feature("debug") and event.is_pressed() and event.button_index == BUTTON_RIGHT:
+				destroy_fire(cell)
 
 func man_cell(cell):
 	var peep = find_nearest_idle_peep(cell.coord)
@@ -126,6 +162,7 @@ func unman_cell(cell):
 	cell.manning = false
 	if cell.manning_marker != null:
 		cell.manning_marker.get_parent().remove_child(cell.manning_marker)
+		cell.manning_marker.queue_free()
 		cell.manning_marker = null
 	if cell.manning_peep != null:
 		cell.manning_peep.panic()
@@ -148,6 +185,7 @@ func set_destination(cell, destination):
 	else:
 		if cell.arrow != null:
 			cell.arrow.get_parent().remove_child(cell.arrow)
+			cell.arrow.queue_free()
 			cell.arrow = null
 
 func find_nearest_idle_peep(coord):

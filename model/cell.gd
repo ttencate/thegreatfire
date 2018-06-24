@@ -3,6 +3,7 @@ var is_walkable = false
 var is_mannable = false
 var is_water = false
 var is_flammable = false
+var is_collapsed = false
 var num_inhabitants = 0
 var uninhabited_tile_name = null
 
@@ -31,6 +32,8 @@ func _init(coord, tile_name):
 		if tile_name.find('house_lit') == 0:
 			num_inhabitants = 1
 			uninhabited_tile_name = tile_name.replace('house_lit', 'house')
+	elif kind == 'rubble':
+		is_collapsed = true
 
 func to_string():
 	var flags = ''

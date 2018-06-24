@@ -4,4 +4,5 @@
 
 hinting = 0
 font_path = "res://fonts/bitmgothic/Bitmgothic.ttf"
+_sections_unfolded = [ "Font", "Settings" ]
 

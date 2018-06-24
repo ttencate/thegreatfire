@@ -6,3 +6,4 @@ func _ready():
 
 func destroy():
 	get_parent().remove_child(self)
+	queue_free()
