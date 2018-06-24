@@ -5,6 +5,7 @@ const CONFIG_FILE = 'user://settings.cfg'
 var LEVELS = []
 var current_level = null
 var max_level = null
+var highscores = {}
 
 onready var level_root = find_node('level_root')
 onready var pause_button = find_node('pause_button')
@@ -25,21 +26,33 @@ func _ready():
 	next_button.connect('pressed', self, 'start_level', [null]) # Squash error
 	
 	load_config()
-	start_level(current_level)
+	if current_level == LEVELS[0]:
+		var intro = preload('res://ui/intro.tscn').instance()
+		add_child(intro)
+		intro.connect('proceed', self, 'start_level', [current_level])
+	else:
+		start_level(current_level)
 
 func load_config():
 	current_level = LEVELS[0]
 	max_level = LEVELS[0]
+	for level in LEVELS:
+		highscores[level] = null
 	var config = ConfigFile.new()
 	var err = config.load(CONFIG_FILE)
 	if err == OK:
 		current_level = check_level(config.get_value('progress', 'current_level'), current_level)
 		max_level = check_level(config.get_value('progress', 'max_level'), max_level)
+		for level in LEVELS:
+			highscores[level] = config.get_value('highscores', level, null)
 
 func save_config():
 	var config = ConfigFile.new()
 	config.set_value('progress', 'current_level', current_level)
 	config.set_value('progress', 'max_level', max_level)
+	for level in LEVELS:
+		if highscores.has(level):
+			config.set_value('highscores', level, highscores[level])
 	config.save(CONFIG_FILE)
 
 func check_level(level, fallback):
@@ -95,8 +108,15 @@ func on_level_won(percent_survived):
 		max_level = next_level
 		save_config()
 	
+	var prev_highscore = highscores[current_level]
+	var is_new_highscore = false
+	if prev_highscore == null or prev_highscore > percent_survived:
+		is_new_highscore = true
+		highscores[current_level] = percent_survived
+		save_config()
+	
 	var win_screen = preload('res://ui/win_screen.tscn').instance()
-	win_screen.initialize(current_level, percent_survived, next_level)
+	win_screen.initialize(current_level, percent_survived, prev_highscore, is_new_highscore, next_level)
 	add_child(win_screen)
 	win_screen.connect('start_level', self, 'start_level')
 
