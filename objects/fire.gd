@@ -11,8 +11,10 @@ var GROW_RANGES = [
 	1,
 	2
 ]
+var COLLAPSE_PROBABILITY = 0.5
 
 signal spreading(coord, size)
+signal collapsing(coord)
 
 var grid
 var coord
@@ -52,6 +54,9 @@ func grow():
 			cell.fire.set_size(cell.fire.size + 1)
 
 func set_size(size_):
-	size_ = min(size_, MAX_SIZE)
-	size = size_
-	play(str(size))
+	if size_ > MAX_SIZE:
+		if randf() < COLLAPSE_PROBABILITY:
+			emit_signal('collapsing', coord)
+	else:
+		size = size_
+		play(str(size))

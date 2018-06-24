@@ -3,6 +3,8 @@ var is_walkable = false
 var is_mannable = false
 var is_water = false
 var is_flammable = false
+var num_inhabitants = 0
+var uninhabited_tile_name = null
 
 var fire = null
 
@@ -26,6 +28,9 @@ func _init(coord, tile_name):
 		is_water = true
 	elif kind == 'house':
 		is_flammable = true
+		if tile_name.find('house_lit') == 0:
+			num_inhabitants = 1
+			uninhabited_tile_name = tile_name.replace('house_lit', 'house')
 
 func to_string():
 	var flags = ''

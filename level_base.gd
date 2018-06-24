@@ -41,9 +41,24 @@ func spawn_fire(coord, size):
 	fire.initialize(grid, coord)
 	fire.size = size
 	fire.connect('spreading', self, 'on_fire_spreading')
+	fire.connect('collapsing', self, 'on_fire_collapsing')
+	
+	var cell = grid.get(coord)
+	if cell.num_inhabitants > 0:
+		tile_map.set_cell(coord.x, coord.y, tile_map.tile_set.find_tile_by_name(cell.uninhabited_tile_name))
+		for i in range(cell.num_inhabitants):
+			spawn_peep(cell.coord)
 
 func on_fire_spreading(coord, size):
 	spawn_fire(coord, size)
+
+func on_fire_collapsing(coord):
+	var cell = grid.get(coord)
+	if cell.fire != null:
+		cell.fire.get_parent().remove_child(cell.fire)
+		cell.fire = null
+	tile_map.set_cell(coord.x, coord.y, tile_map.tile_set.find_tile_by_name('rubble'))
+	cell.is_flammable = false
 
 func reduce_fire(coord):
 	var cell = grid.get(coord)

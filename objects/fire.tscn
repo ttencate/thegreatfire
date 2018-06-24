@@ -45,6 +45,7 @@ animations = [ {
 
 frames = SubResource( 1 )
 animation = "1"
+frame = 1
 playing = true
 script = ExtResource( 11 )
 
