@@ -127,6 +127,8 @@ func on_level_won(percent_survived):
 	win_screen.initialize(current_level, percent_survived, prev_highscore, is_new_highscore, next_level)
 	add_child(win_screen)
 	win_screen.connect('start_level', self, 'start_level')
+	
+	$win_sound.play()
 
 func get_level_index(level):
 	for i in range(len(LEVELS)):

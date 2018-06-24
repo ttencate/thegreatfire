@@ -10,6 +10,9 @@ onready var tile_map = find_node('tile_map')
 onready var objects = find_node('objects')
 onready var overlay = find_node('overlay')
 onready var cursor = find_node('cursor')
+onready var crackling = find_node('crackling')
+onready var click = find_node('click')
+onready var pop = find_node('pop')
 var grid
 var peeps = []
 var tutorials = []
@@ -37,6 +40,12 @@ func _ready():
 	init.queue_free()
 	
 	cursor.hide()
+	
+	crackling.play()
+	crackling.connect('finished', crackling, 'play')
+	update_crackling_volume()
+	
+	$bell.play()
 	
 	for child in get_children():
 		if child.name.left(9) == 'tutorial_':
@@ -75,6 +84,7 @@ func spawn_peep(coord):
 	peep.connect('throwing', self, 'on_peep_throwing')
 	peep.connect('state_changed', self, 'update_peep_counter')
 	peeps.push_back(peep)
+	return peep
 
 func update_peep_counter():
 	var idle_peeps = 0
@@ -96,11 +106,25 @@ func spawn_fire(coord, size):
 	fire.connect('spreading', self, 'on_fire_spreading')
 	fire.connect('collapsing', self, 'on_fire_collapsing')
 	
+	update_crackling_volume()
+	
 	if cell.num_inhabitants > 0:
 		for i in range(cell.num_inhabitants):
-			spawn_peep(cell.coord)
+			var peep = spawn_peep(cell.coord)
+			peep.yell_fire()
 		tile_map.set_cell(coord.x, coord.y, tile_map.tile_set.find_tile_by_name(cell.uninhabited_tile_name))
 		cell.num_inhabitants = 0
+
+func update_crackling_volume():
+	var total_fire = 0
+	for coord in grid.coords:
+		var cell = grid.get(coord)
+		if cell.fire != null:
+			total_fire += cell.fire.size
+	if total_fire == 0:
+		crackling.stop()
+	else:
+		crackling.volume_db = linear2db(float(total_fire) / 50) - 3
 
 func explode(cell):
 	cell.is_explosive = false
@@ -132,12 +156,14 @@ func reduce_fire(coord):
 			cell.fire.set_size(cell.fire.size - 1)
 		else:
 			destroy_fire(cell)
+	update_crackling_volume()
 
 func destroy_fire(cell):
 	if cell.fire != null:
 		cell.fire.get_parent().remove_child(cell.fire)
 		cell.fire.queue_free()
 		cell.fire = null
+	update_crackling_volume()
 	check_win()
 
 func on_peep_throwing(from, to):
@@ -193,8 +219,12 @@ func _input(event):
 					if to.is_mannable and not to.manning:
 						man_cell(to)
 					if (from.is_water and to.manning) or (from.manning and (to.is_flammable or to.manning)):
+						click.pitch_scale = rand_range(0.9, 1.1)
+						click.play()
 						set_destination(from, coord)
 				elif not from.manning and to.manning:
+					pop.pitch_scale = rand_range(0.9, 1.1)
+					pop.play()
 					unman_cell(to)
 				check_tutorial_completed(from, to)
 			drag_from_coord = coord

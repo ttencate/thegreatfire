@@ -1,8 +1,12 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://level_base.gd" type="Script" id=1]
 [ext_resource path="res://tiles/tileset.tres" type="TileSet" id=2]
 [ext_resource path="res://objects/cursor.png" type="Texture" id=3]
+[ext_resource path="res://sounds/click.wav" type="AudioStream" id=4]
+[ext_resource path="res://sounds/pop.wav" type="AudioStream" id=5]
+[ext_resource path="res://sounds/crackling.wav" type="AudioStream" id=6]
+[ext_resource path="res://sounds/bell.wav" type="AudioStream" id=7]
 
 [node name="level_base" type="Node2D" index="0"]
 
@@ -66,5 +70,46 @@ _sections_unfolded = [ "Pause", "Sort", "Transform", "Z Index" ]
 
 visible = false
 texture = ExtResource( 3 )
+
+[node name="click" type="AudioStreamPlayer2D" parent="tile_map/cursor" index="0"]
+
+stream = ExtResource( 4 )
+volume_db = -9.0
+pitch_scale = 1.0
+autoplay = false
+max_distance = 2000.0
+attenuation = 1.0
+bus = "Master"
+area_mask = 1
+
+[node name="pop" type="AudioStreamPlayer2D" parent="tile_map/cursor" index="1"]
+
+stream = ExtResource( 5 )
+volume_db = -9.0
+pitch_scale = 1.0
+autoplay = false
+max_distance = 2000.0
+attenuation = 1.0
+bus = "Master"
+area_mask = 1
+
+[node name="crackling" type="AudioStreamPlayer" parent="." index="1"]
+
+stream = ExtResource( 6 )
+volume_db = 0.0
+pitch_scale = 1.0
+autoplay = false
+mix_target = 0
+bus = "Master"
+_sections_unfolded = [ "Pause" ]
+
+[node name="bell" type="AudioStreamPlayer" parent="." index="2"]
+
+stream = ExtResource( 7 )
+volume_db = -9.0
+pitch_scale = 1.0
+autoplay = false
+mix_target = 0
+bus = "Master"
 
 

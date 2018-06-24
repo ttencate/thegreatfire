@@ -29,6 +29,10 @@ onready var head = $head
 onready var bucket_root = $bucket_root
 onready var left_hand = $left_hand
 onready var right_hand = $right_hand
+onready var aah = $aah
+onready var fire = $fire
+onready var splash = $splash
+onready var hiss = $hiss
 var current_direction = null
 var offset = Vector2(0, 0)
 var hand_time = 0
@@ -36,15 +40,25 @@ var hand_time = 0
 func _ready():
 	body.modulate = ColorN(Utils.random_item(["aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige", "bisque", "black", "blanchedalmond", "blue", "blueviolet", "brown", "burlywood", "cadetblue", "chartreuse", "chocolate", "coral", "cornflower", "cornsilk", "crimson", "cyan", "darkblue", "darkcyan", "darkgoldenrod", "darkgray", "darkgreen", "darkkhaki", "darkmagenta", "darkolivegreen", "darkorange", "darkorchid", "darkred", "darksalmon", "darkseagreen", "darkslateblue", "darkslategray", "darkturquoise", "darkviolet", "deeppink", "deepskyblue", "dimgray", "dodgerblue", "firebrick", "floralwhite", "forestgreen", "fuchsia", "gainsboro", "ghostwhite", "gold", "goldenrod", "gray", "webgray", "green", "webgreen", "greenyellow", "honeydew", "hotpink", "indianred", "indigo", "ivory", "khaki", "lavender", "lavenderblush", "lawngreen", "lemonchiffon", "lightblue", "lightcoral", "lightcyan", "lightgoldenrod", "lightgray", "lightgreen", "lightpink", "lightsalmon", "lightseagreen", "lightskyblue", "lightslategray", "lightsteelblue", "lightyellow", "lime", "limegreen", "linen", "magenta", "maroon", "webmaroon", "mediumaquamarine", "mediumblue", "mediumorchid", "mediumpurple", "mediumseagreen", "mediumslateblue", "mediumspringgreen", "mediumturquoise", "mediumvioletred", "midnightblue", "mintcream", "mistyrose", "moccasin", "navajowhite", "navyblue", "oldlace", "olive", "olivedrab", "orange", "orangered", "orchid", "palegoldenrod", "palegreen", "paleturquoise", "palevioletred", "papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue", "purple", "webpurple", "rebeccapurple", "red", "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen", "seashell", "sienna", "silver", "skyblue", "slateblue", "slategray", "snow", "springgreen", "steelblue", "tan", "teal", "thistle", "tomato", "turquoise", "violet", "wheat", "white", "whitesmoke", "yellow", "yellowgreen"]))
 	set_direction(Vector2(0, 1))
+	aah.stream = load('res://sounds/aah_%d.wav' % (1 + (randi() % 6)))
+	fire.stream = load('res://sounds/fire_%d.wav' % (1 + (randi() % 3)))
+
+func yell_fire():
+	fire.pitch_scale = rand_range(0.8, 1.2)
+	fire.play()
 
 func initialize(grid, coord):
 	self.grid = grid
 	set_coord(coord)
 	position = grid.get_cell_center(coord)
+	randomize_route() # Prevent scream
 
 func _physics_process(delta):
 	if state == PANIC and len(route) == 0:
 		randomize_route()
+		if randf() < 0.2:
+			aah.pitch_scale = rand_range(0.8, 1.2)
+			aah.play()
 	
 	if len(route) > 0:
 		set_direction(route[0] - coord)
@@ -238,6 +252,12 @@ func receive_bucket_from(bucket, coord):
 
 func throw_bucket(dest):
 	emit_signal('throwing', coord, dest)
+	splash.stream = load('res://sounds/splash_%d.wav' % (1 + (randi() % 3)))
+	splash.pitch_scale = rand_range(0.9, 1.1)
+	splash.play()
+	hiss.stream = load('res://sounds/hiss_%d.wav' % (1 + (randi() % 2)))
+	hiss.pitch_scale = rand_range(0.9, 1.1)
+	hiss.play()
 	destroy_bucket()
 
 func destroy_bucket():

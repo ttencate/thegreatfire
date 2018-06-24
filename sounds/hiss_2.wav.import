@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/hiss_2.wav-dff0e8a98a0d3a914f42a7cae31b0aed.sample"
+
+[deps]
+
+source_file="res://sounds/hiss_2.wav"
+dest_files=[ "res://.import/hiss_2.wav-dff0e8a98a0d3a914f42a7cae31b0aed.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0
