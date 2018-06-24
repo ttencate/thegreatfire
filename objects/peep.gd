@@ -23,7 +23,7 @@ var bucket_origin = null
 var bucket_direction = null
 
 var body_number = 1
-var head_number = 1
+var head_number = 1 + (randi() % 2)
 onready var body = $body
 onready var head = $head
 onready var bucket_root = $bucket_root
