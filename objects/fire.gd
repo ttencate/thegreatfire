@@ -44,6 +44,8 @@ func grow():
 			var d = Vector2(dx, dy)
 			if d.length() > r:
 				continue
+			if size == MAX_SIZE and d.length_squared() == 0:
+				continue
 			candidates.push_back(coord + d)
 	var candidate = Utils.random_item(candidates)
 	var cell = grid.get(candidate)

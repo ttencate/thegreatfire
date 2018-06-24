@@ -25,7 +25,7 @@ func _ready():
 		if tile_id < 0:
 			continue
 		var tile_name = init.tile_set.tile_get_name(tile_id)
-		if tile_name == 'peep_1':
+		if tile_name.left(5) == 'peep_':
 			spawn_peep(coord)
 		elif tile_name.left(5) == 'fire_':
 			spawn_fire(coord, int(tile_name[5]))
@@ -50,9 +50,10 @@ func spawn_fire(coord, size):
 	
 	var cell = grid.get(coord)
 	if cell.num_inhabitants > 0:
-		tile_map.set_cell(coord.x, coord.y, tile_map.tile_set.find_tile_by_name(cell.uninhabited_tile_name))
 		for i in range(cell.num_inhabitants):
 			spawn_peep(cell.coord)
+		tile_map.set_cell(coord.x, coord.y, tile_map.tile_set.find_tile_by_name(cell.uninhabited_tile_name))
+		cell.num_inhabitants = 0
 
 func on_fire_spreading(coord, size):
 	spawn_fire(coord, size)
@@ -61,6 +62,8 @@ func on_fire_collapsing(coord):
 	var cell = grid.get(coord)
 	destroy_fire(cell)
 	tile_map.set_cell(coord.x, coord.y, tile_map.tile_set.find_tile_by_name('rubble'))
+	cell.is_walkable = true
+	cell.is_mannable = true
 	cell.is_flammable = false
 	cell.is_collapsed = true
 

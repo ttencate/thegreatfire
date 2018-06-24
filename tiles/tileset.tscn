@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://tiles/street_cobble_1.png" type="Texture" id=1]
 [ext_resource path="res://tiles/house_1.png" type="Texture" id=2]
@@ -15,6 +15,12 @@
 [ext_resource path="res://objects/peep_1.png" type="Texture" id=13]
 [ext_resource path="res://tiles/grass_2.png" type="Texture" id=14]
 [ext_resource path="res://tiles/house_lit_1.png" type="Texture" id=15]
+[ext_resource path="res://tiles/grass_3.png" type="Texture" id=16]
+[ext_resource path="res://tiles/grass_4.png" type="Texture" id=17]
+[ext_resource path="res://tiles/grass_5.png" type="Texture" id=18]
+[ext_resource path="res://tiles/grass_6.png" type="Texture" id=19]
+[ext_resource path="res://tiles/water_3.png" type="Texture" id=20]
+[ext_resource path="res://tiles/water_4.png" type="Texture" id=21]
 
 [node name="tileset" type="Node2D" index="0"]
 
@@ -30,7 +36,7 @@ texture = ExtResource( 2 )
 
 [node name="barrels" type="Sprite" parent="." index="2"]
 
-position = Vector2( 38.7207, 52.0644 )
+position = Vector2( 41.6406, 33.0851 )
 texture = ExtResource( 3 )
 
 [node name="rubble" type="Sprite" parent="." index="3"]
@@ -40,12 +46,12 @@ texture = ExtResource( 4 )
 
 [node name="water_1" type="Sprite" parent="." index="4"]
 
-position = Vector2( 56.5321, 81.8473 )
+position = Vector2( 41.6407, 85.6431 )
 texture = ExtResource( 5 )
 
 [node name="water_2" type="Sprite" parent="." index="5"]
 
-position = Vector2( 88.3589, 78.0514 )
+position = Vector2( 43.6846, 65.7879 )
 texture = ExtResource( 6 )
 
 [node name="grass_1" type="Sprite" parent="." index="6"]
@@ -55,7 +61,7 @@ texture = ExtResource( 7 )
 
 [node name="fire_1_1" type="Sprite" parent="." index="7"]
 
-position = Vector2( 142.377, 26.3693 )
+position = Vector2( 170.992, 53.8162 )
 texture = ExtResource( 8 )
 
 [node name="fire_2_1" type="Sprite" parent="." index="8"]
@@ -92,5 +98,35 @@ texture = ExtResource( 14 )
 
 position = Vector2( 87.7747, 12.3538 )
 texture = ExtResource( 15 )
+
+[node name="grass_3" type="Sprite" parent="." index="15"]
+
+position = Vector2( 123.397, 13.2298 )
+texture = ExtResource( 16 )
+
+[node name="grass_4" type="Sprite" parent="." index="16"]
+
+position = Vector2( 121.937, 33.961 )
+texture = ExtResource( 17 )
+
+[node name="grass_5" type="Sprite" parent="." index="17"]
+
+position = Vector2( 161.064, 10.3099 )
+texture = ExtResource( 18 )
+
+[node name="grass_6" type="Sprite" parent="." index="18"]
+
+position = Vector2( 151.136, 34.253 )
+texture = ExtResource( 19 )
+
+[node name="water_3" type="Sprite" parent="." index="19"]
+
+position = Vector2( 61.4958, 87.6869 )
+texture = ExtResource( 20 )
+
+[node name="water_4" type="Sprite" parent="." index="20"]
+
+position = Vector2( 22.9532, 85.935 )
+texture = ExtResource( 21 )
 
 

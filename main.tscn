@@ -1,48 +1,134 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://ui/toolbar.png" type="Texture" id=2]
-[ext_resource path="res://fonts/bitmgothic/bitmgothic.tres" type="DynamicFontData" id=3]
-[ext_resource path="res://fonts/yoster/yoster.ttf" type="DynamicFontData" id=4]
-
-[sub_resource type="DynamicFont" id=1]
-
-size = 16
-use_mipmaps = false
-use_filter = false
-font_data = ExtResource( 3 )
-_sections_unfolded = [ "Font", "Settings" ]
+[ext_resource path="res://fonts/yoster/yoster.ttf" type="DynamicFontData" id=3]
+[ext_resource path="res://ui/pause.png" type="Texture" id=4]
+[ext_resource path="res://fonts/bitmgothic/bitmgothic.tres" type="DynamicFontData" id=5]
 
 [sub_resource type="DynamicFont" id=2]
 
 size = 12
 use_mipmaps = false
 use_filter = false
-font_data = ExtResource( 4 )
+font_data = ExtResource( 3 )
 _sections_unfolded = [ "Font", "Settings" ]
 
-[node name="main" type="Node2D" index="0"]
+[sub_resource type="DynamicFont" id=1]
 
+size = 16
+use_mipmaps = false
+use_filter = false
+extra_spacing_top = 2
+extra_spacing_bottom = -2
+font_data = ExtResource( 5 )
+_sections_unfolded = [ "Extra Spacing", "Font", "Settings" ]
+
+[node name="main" type="Node2D"]
+
+pause_mode = 2
 script = ExtResource( 1 )
+_sections_unfolded = [ "Pause" ]
 
 [node name="level_root" type="Node2D" parent="." index="0"]
 
 position = Vector2( 0, 30 )
-_sections_unfolded = [ "Transform" ]
+_sections_unfolded = [ "Pause", "Transform" ]
 
 [node name="toolbar" type="Sprite" parent="." index="1"]
 
 texture = ExtResource( 2 )
 centered = false
-_sections_unfolded = [ "Offset" ]
+_sections_unfolded = [ "Offset", "Pause" ]
 
-[node name="level_text" type="Label" parent="toolbar" index="0"]
+[node name="pause_button" type="Button" parent="toolbar" index="0"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 415.0
+margin_left = 5.0
+margin_top = 4.0
+margin_right = 30.0
+margin_bottom = 24.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+hint_tooltip = "Go to previous level"
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = SubResource( 2 )
+toggle_mode = false
+enabled_focus_mode = 0
+shortcut = null
+group = null
+icon = ExtResource( 4 )
+flat = false
+align = 1
+_sections_unfolded = [ "Hint", "custom_fonts" ]
+
+[node name="prev_button" type="Button" parent="toolbar" index="1"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 355.0
+margin_top = 4.0
+margin_right = 380.0
+margin_bottom = 24.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+hint_tooltip = "Go to previous level"
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = SubResource( 2 )
+toggle_mode = false
+enabled_focus_mode = 0
+shortcut = null
+group = null
+text = "<"
+flat = false
+align = 1
+_sections_unfolded = [ "Hint" ]
+
+[node name="next_button" type="Button" parent="toolbar" index="2"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 385.0
+margin_top = 4.0
+margin_right = 411.0
+margin_bottom = 24.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+hint_tooltip = "Go to next level"
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = SubResource( 2 )
+toggle_mode = false
+enabled_focus_mode = 0
+shortcut = null
+group = null
+text = ">"
+flat = false
+align = 1
+_sections_unfolded = [ "Hint" ]
+
+[node name="level_text" type="Label" parent="toolbar" index="3"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 420.0
 margin_top = 4.0
 margin_right = 475.0
 margin_bottom = 24.0
@@ -62,61 +148,5 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 _sections_unfolded = [ "custom_colors", "custom_constants", "custom_fonts" ]
-
-[node name="prev_button" type="Button" parent="toolbar" index="1"]
-
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 360.0
-margin_top = 4.0
-margin_right = 381.0
-margin_bottom = 24.0
-rect_pivot_offset = Vector2( 0, 0 )
-rect_clip_content = false
-hint_tooltip = "Go to previous level"
-focus_mode = 2
-mouse_filter = 0
-mouse_default_cursor_shape = 0
-size_flags_horizontal = 1
-size_flags_vertical = 1
-custom_fonts/font = SubResource( 2 )
-toggle_mode = false
-enabled_focus_mode = 2
-shortcut = null
-group = null
-text = "<"
-flat = false
-align = 1
-_sections_unfolded = [ "Hint" ]
-
-[node name="next_button" type="Button" parent="toolbar" index="2"]
-
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 385.0
-margin_top = 4.0
-margin_right = 406.0
-margin_bottom = 24.0
-rect_pivot_offset = Vector2( 0, 0 )
-rect_clip_content = false
-hint_tooltip = "Go to next level"
-focus_mode = 2
-mouse_filter = 0
-mouse_default_cursor_shape = 0
-size_flags_horizontal = 1
-size_flags_vertical = 1
-custom_fonts/font = SubResource( 2 )
-toggle_mode = false
-enabled_focus_mode = 2
-shortcut = null
-group = null
-text = ">"
-flat = false
-align = 1
-_sections_unfolded = [ "Hint" ]
 
 
