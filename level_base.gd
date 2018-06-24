@@ -47,11 +47,12 @@ func _ready():
 	
 	$bell.play()
 	
+	$tutorial_timer.connect('timeout', self, 'show_next_tutorial')
 	for child in get_children():
-		if child.name.left(9) == 'tutorial_':
+		if child.name.left(9) == 'tutorial_' and child is TileMap:
 			child.hide()
 			tutorials.push_back(child)
-	show_next_tutorial()
+	$tutorial_timer.start()
 
 func show_next_tutorial():
 	if len(tutorials) == 0:
@@ -75,7 +76,7 @@ func check_tutorial_completed(from_cell, to_cell):
 	match [tile_name, to_cell.coord - from_cell.coord]:
 		['tutorial_5', Vector2(0, -1)], ['tutorial_7', Vector2(1, 0)], ['tutorial_8', Vector2(-1, 0)]:
 			tutorials.pop_front().queue_free()
-			show_next_tutorial()
+			$tutorial_timer.start()
 
 func spawn_peep(coord):
 	var peep = preload('res://objects/peep.tscn').instance()
@@ -98,6 +99,8 @@ var fire_yells = 0
 
 func _physics_process(delta):
 	fire_yells = 0
+	if not $bell.playing and randf() / delta < 0.1:
+		$bell.play()
 
 func spawn_fire(coord, size):
 	var cell = grid.get(coord)

@@ -112,4 +112,11 @@ autoplay = false
 mix_target = 0
 bus = "Master"
 
+[node name="tutorial_timer" type="Timer" parent="." index="3"]
+
+process_mode = 0
+wait_time = 3.0
+one_shot = true
+autostart = false
+
 

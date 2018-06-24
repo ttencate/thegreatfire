@@ -27,7 +27,7 @@ func _ready():
 	next_button.connect('pressed', self, 'start_level', [null]) # Squash error
 	
 	load_config()
-	if current_level == LEVELS[0]:
+	if true: # current_level == LEVELS[0]:
 		var intro = preload('res://ui/intro.tscn').instance()
 		add_child(intro)
 		intro.connect('proceed', self, 'start_level', [current_level])

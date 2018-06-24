@@ -1,9 +1,13 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://objects/peep.gd" type="Script" id=1]
 [ext_resource path="res://objects/body_down_1.png" type="Texture" id=2]
 [ext_resource path="res://objects/head_down_1.png" type="Texture" id=3]
 [ext_resource path="res://objects/hand.png" type="Texture" id=4]
+[ext_resource path="res://sounds/aah_1.wav" type="AudioStream" id=5]
+[ext_resource path="res://sounds/fire_1.wav" type="AudioStream" id=6]
+[ext_resource path="res://sounds/splash_1.wav" type="AudioStream" id=7]
+[ext_resource path="res://sounds/hiss_1.wav" type="AudioStream" id=8]
 
 [node name="peep" type="Node2D" index="0"]
 
@@ -34,8 +38,8 @@ _sections_unfolded = [ "Transform", "Z Index" ]
 
 [node name="aah" type="AudioStreamPlayer2D" parent="." index="5"]
 
-stream = null
-volume_db = 0.0
+stream = ExtResource( 5 )
+volume_db = -9.0
 pitch_scale = 1.0
 autoplay = false
 max_distance = 2000.0
@@ -45,8 +49,8 @@ area_mask = 1
 
 [node name="fire" type="AudioStreamPlayer2D" parent="." index="6"]
 
-stream = null
-volume_db = 0.0
+stream = ExtResource( 6 )
+volume_db = -6.0
 pitch_scale = 1.0
 autoplay = false
 max_distance = 2000.0
@@ -56,8 +60,8 @@ area_mask = 1
 
 [node name="splash" type="AudioStreamPlayer2D" parent="." index="7"]
 
-stream = null
-volume_db = 0.0
+stream = ExtResource( 7 )
+volume_db = -3.0
 pitch_scale = 1.0
 autoplay = false
 max_distance = 2000.0
@@ -67,8 +71,8 @@ area_mask = 1
 
 [node name="hiss" type="AudioStreamPlayer2D" parent="." index="8"]
 
-stream = null
-volume_db = 0.0
+stream = ExtResource( 8 )
+volume_db = -3.0
 pitch_scale = 1.0
 autoplay = false
 max_distance = 2000.0

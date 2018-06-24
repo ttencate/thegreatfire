@@ -56,7 +56,7 @@ func initialize(grid, coord):
 func _physics_process(delta):
 	if state == PANIC and len(route) == 0:
 		randomize_route()
-		if randf() < 0.2:
+		if randf() < 0.5:
 			aah.pitch_scale = rand_range(0.8, 1.2)
 			aah.play()
 	
