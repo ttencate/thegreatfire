@@ -108,12 +108,12 @@ func destroy_bucket():
 		bucket = null
 
 func find_bucket_destination():
-	for n in grid.neighbors(coord):
-		if n == bucket_origin:
-			continue
-		var cell = grid.get(n)
-		if cell.manning_peep != null and cell.manning_peep.state == PASSING and cell.manning_peep.bucket == null:
-			return n
+	var cell = grid.get(coord)
+	if cell.destination == null:
+		return null
+	var dest_cell = grid.get(cell.destination)
+	if dest_cell.manning_peep != null and dest_cell.manning_peep.state == PASSING and dest_cell.manning_peep.bucket == null:
+		return cell.destination
 	return null
 
 func set_coord(coord):

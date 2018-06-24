@@ -44,8 +44,7 @@ func spawn_fire(coord, size):
 func on_fire_spreading(coord, size):
 	spawn_fire(coord, size)
 
-var mouse_down = false
-var manning = false
+var drag_from_coord = null
 
 func _input(event):
 	if event is InputEventMouse:
@@ -54,17 +53,28 @@ func _input(event):
 			cursor.hide()
 			return
 		var cell = grid.get(coord)
-		cursor.visible = cell.is_mannable
+		cursor.show()
 		cursor.position = grid.get_cell_center(coord)
+		# print(cell.to_string())
+		
+		if drag_from_coord != null and coord != drag_from_coord:
+			if (coord - drag_from_coord).length_squared() == 1:
+				var from = grid.get(drag_from_coord)
+				var to = grid.get(coord)
+				if from.is_water or from.manning:
+					if to.is_mannable and not to.manning:
+						man_cell(to)
+					if to.is_flammable or to.manning:
+						set_destination(from, coord)
+				elif from.is_mannable and not from.manning and to.manning:
+					unman_cell(to)
+			drag_from_coord = coord
 		
 		if event is InputEventMouseButton:
-			mouse_down = event.is_pressed()
-			manning = not cell.manning
-		if mouse_down:
-			if manning and cell.is_mannable and not cell.manning:
-				man_cell(cell)
-			elif not manning and cell.manning:
-				unman_cell(cell)
+			if event.is_pressed():
+				drag_from_coord = coord
+			else:
+				drag_from_coord = null
 
 func man_cell(cell):
 	var peep = find_nearest_idle_peep(cell.coord)
@@ -87,6 +97,25 @@ func unman_cell(cell):
 	if cell.manning_peep != null:
 		cell.manning_peep.panic()
 		cell.manning_peep = null
+	set_destination(cell, null)
+	
+	for n in grid.neighbors(cell.coord):
+		var neighbor = grid.get(n)
+		if neighbor.destination == cell.coord:
+			set_destination(neighbor, null)
+
+func set_destination(cell, destination):
+	cell.destination = destination
+	if cell.destination != null:
+		if cell.arrow == null:
+			cell.arrow = preload('res://objects/arrow.tscn').instance()
+			overlay.add_child(cell.arrow)
+			cell.arrow.position = grid.get_cell_center(cell.coord)
+		cell.arrow.set_direction(cell.destination - cell.coord)
+	else:
+		if cell.arrow != null:
+			cell.arrow.get_parent().remove_child(cell.arrow)
+			cell.arrow = null
 
 func find_nearest_idle_peep(coord):
 	var queue = [coord]

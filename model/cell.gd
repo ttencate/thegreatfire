@@ -11,6 +11,9 @@ var manning = false
 var manning_peep = null
 var manning_marker = null
 
+var destination = null
+var arrow = null
+
 func _init(coord, tile_name):
 	self.coord = coord
 	
@@ -30,4 +33,4 @@ func to_string():
 	if is_mannable: flags += 'm'
 	if is_water: flags += '~'
 	if is_flammable: flags += 'f'
-	return '%s[%s]' % [coord, flags]
+	return '%s[%s, destination=%s]' % [coord, flags, destination]
