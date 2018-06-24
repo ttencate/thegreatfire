@@ -72,6 +72,9 @@ func start_level(level):
 	if next_level:
 		next_button.disabled = false
 		next_button.connect('pressed', self, 'start_level', [next_level])
+	
+	if get_tree().paused:
+		toggle_pause()
 
 func toggle_pause():
 	get_tree().paused = !get_tree().paused

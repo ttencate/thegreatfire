@@ -24,7 +24,7 @@ extra_spacing_bottom = -2
 font_data = ExtResource( 5 )
 _sections_unfolded = [ "Extra Spacing", "Font", "Settings" ]
 
-[node name="main" type="Node2D"]
+[node name="main" type="Node2D" index="0"]
 
 pause_mode = 2
 script = ExtResource( 1 )
@@ -53,7 +53,7 @@ margin_right = 30.0
 margin_bottom = 24.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
-hint_tooltip = "Go to previous level"
+hint_tooltip = "Pause game"
 mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1

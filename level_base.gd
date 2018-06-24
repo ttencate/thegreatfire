@@ -41,6 +41,11 @@ func spawn_peep(coord):
 	peep.connect('throwing', self, 'on_peep_throwing')
 
 func spawn_fire(coord, size):
+	var cell = grid.get(coord)
+	if cell.is_explosive:
+		explode(cell)
+		return
+	
 	var fire = preload('res://objects/fire.tscn').instance()
 	objects.add_child(fire)
 	fire.initialize(grid, coord)
@@ -48,12 +53,22 @@ func spawn_fire(coord, size):
 	fire.connect('spreading', self, 'on_fire_spreading')
 	fire.connect('collapsing', self, 'on_fire_collapsing')
 	
-	var cell = grid.get(coord)
 	if cell.num_inhabitants > 0:
 		for i in range(cell.num_inhabitants):
 			spawn_peep(cell.coord)
 		tile_map.set_cell(coord.x, coord.y, tile_map.tile_set.find_tile_by_name(cell.uninhabited_tile_name))
 		cell.num_inhabitants = 0
+
+func explode(cell):
+	cell.is_explosive = false
+	for n in grid.neighbors(cell.coord):
+		var nc = grid.get(n)
+		if nc.is_flammable:
+			if nc.fire == null:
+				spawn_fire(n, 3)
+			else:
+				nc.fire.set_size(nc.fire.size + 2)
+	on_fire_collapsing(cell.coord)
 
 func on_fire_spreading(coord, size):
 	spawn_fire(coord, size)
