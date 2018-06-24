@@ -84,6 +84,7 @@ func spawn_peep(coord):
 	peep.connect('throwing', self, 'on_peep_throwing')
 	peep.connect('state_changed', self, 'update_peep_counter')
 	peeps.push_back(peep)
+	update_peep_counter()
 	return peep
 
 func update_peep_counter():
@@ -92,6 +93,11 @@ func update_peep_counter():
 		if peep.state == peep.PANIC:
 			idle_peeps += 1
 	emit_signal('idle_peeps_changed', idle_peeps)
+
+var fire_yells = 0
+
+func _physics_process(delta):
+	fire_yells = 0
 
 func spawn_fire(coord, size):
 	var cell = grid.get(coord)
@@ -111,7 +117,9 @@ func spawn_fire(coord, size):
 	if cell.num_inhabitants > 0:
 		for i in range(cell.num_inhabitants):
 			var peep = spawn_peep(cell.coord)
-			peep.yell_fire()
+			if fire_yells == 0:
+				peep.yell_fire()
+				fire_yells += 1
 		tile_map.set_cell(coord.x, coord.y, tile_map.tile_set.find_tile_by_name(cell.uninhabited_tile_name))
 		cell.num_inhabitants = 0
 

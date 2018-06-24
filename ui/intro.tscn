@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://ui/intro.gd" type="Script" id=1]
 [ext_resource path="res://fonts/bitmgothic/Bitmgothic.ttf" type="DynamicFontData" id=2]
 [ext_resource path="res://fonts/yoster/yoster.ttf" type="DynamicFontData" id=3]
+[ext_resource path="res://sounds/big_ben.wav" type="AudioStream" id=4]
 
 [sub_resource type="DynamicFont" id=1]
 
@@ -109,7 +110,7 @@ tracks/1/keys = {
 } ]
 }
 
-[node name="intro" type="ColorRect" index="0"]
+[node name="intro" type="ColorRect"]
 
 modulate = Color( 1, 1, 1, 0 )
 anchor_left = 0.0
@@ -227,5 +228,14 @@ playback_speed = 1.0
 anims/fade_in = SubResource( 3 )
 anims/fade_out = SubResource( 4 )
 blend_times = [  ]
+
+[node name="big_ben" type="AudioStreamPlayer" parent="." index="4"]
+
+stream = ExtResource( 4 )
+volume_db = -3.0
+pitch_scale = 1.0
+autoplay = true
+mix_target = 0
+bus = "Master"
 
 

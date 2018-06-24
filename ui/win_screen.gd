@@ -27,7 +27,7 @@ onready var remark = find_node('remark')
 func _ready():
 	$animation_player.play('fade_in')
 	set_counting_fraction(counting_fraction)
-	remark.text = REMARKS[clamp(floor(percent_survived / 100 * len(REMARKS)), 0, len(REMARKS) - 1)]
+	remark.text = REMARKS[clamp(floor(percent_survived / 100 * (len(REMARKS) - 1)), 0, len(REMARKS) - 1)]
 	if is_new_highscore:
 		if prev_highscore == null:
 			highscore.text = ''
