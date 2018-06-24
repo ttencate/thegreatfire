@@ -45,7 +45,10 @@ func load_config():
 		current_level = check_level(config.get_value('progress', 'current_level'), current_level)
 		max_level = check_level(config.get_value('progress', 'max_level'), max_level)
 		for level in LEVELS:
-			highscores[level] = config.get_value('highscores', level, null)
+			highscores[level] = config.get_value('highscores', level, -1)
+			# Squash error.
+			if highscores[level] < 0:
+				highscores[level] = null
 
 func save_config():
 	var config = ConfigFile.new()

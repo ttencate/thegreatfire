@@ -12,6 +12,7 @@ onready var overlay = find_node('overlay')
 onready var cursor = find_node('cursor')
 var grid
 var peeps = []
+var tutorials = []
 
 var is_won = false
 
@@ -36,6 +37,36 @@ func _ready():
 	init.queue_free()
 	
 	cursor.hide()
+	
+	for child in get_children():
+		if child.name.left(9) == 'tutorial_':
+			child.hide()
+			tutorials.push_back(child)
+	show_next_tutorial()
+
+func show_next_tutorial():
+	if len(tutorials) == 0:
+		return
+	tutorials[0].show()
+
+func check_tutorial_completed(from_cell, to_cell):
+	if len(tutorials) == 0:
+		return
+	var tutorial = tutorials[0]
+	if tutorial.name.find('_unset') >= 0:
+		if from_cell.destination != null:
+			return
+	else:
+		if from_cell.destination != to_cell.coord:
+			return
+	var tile_id = tutorial.get_cell(to_cell.coord.x, to_cell.coord.y)
+	if tile_id < 0:
+		return
+	var tile_name = tutorial.tile_set.tile_get_name(tile_id)
+	match [tile_name, to_cell.coord - from_cell.coord]:
+		['tutorial_5', Vector2(0, -1)], ['tutorial_7', Vector2(1, 0)], ['tutorial_8', Vector2(-1, 0)]:
+			tutorials.pop_front().queue_free()
+			show_next_tutorial()
 
 func spawn_peep(coord):
 	var peep = preload('res://objects/peep.tscn').instance()
@@ -163,8 +194,9 @@ func _input(event):
 						man_cell(to)
 					if (from.is_water and to.manning) or (from.manning and (to.is_flammable or to.manning)):
 						set_destination(from, coord)
-				elif from.is_mannable and not from.manning and to.manning:
+				elif not from.manning and to.manning:
 					unman_cell(to)
+				check_tutorial_completed(from, to)
 			drag_from_coord = coord
 		
 		if event is InputEventMouseButton:
