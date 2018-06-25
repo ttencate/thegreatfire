@@ -14,6 +14,8 @@ onready var prev_button = find_node('prev_button')
 onready var next_button = find_node('next_button')
 
 func _ready():
+	OS.set_window_maximized(true)
+	
 	var i = 1
 	while true:
 		var level = 'res://levels/level_%02d.tscn' % i
